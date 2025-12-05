@@ -26,7 +26,6 @@
       position: absolute; top: 50%; left: 50%;
       transform: translate(-50%, -50%);
     }
-    /*  ENHANCED TEAM CARD ANIMATIONS */
     .team-member-card {
       transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       transform: scale(0.8) translateY(50px);
@@ -41,7 +40,7 @@
     .team-member-card:nth-child(3).visible { transition-delay: 0.3s; }
     .team-member-card:nth-child(4).visible { transition-delay: 0.4s; }
     .team-member-card:nth-child(5).visible { transition-delay: 0.5s; }
-    
+
     .chart-container {
       height: 300px;
       background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
@@ -49,22 +48,18 @@
       padding: 20px;
       border: 1px solid #374151;
     }
-    .aqi-gauge-wrapper {
-      background: conic-gradient(#f59e0b 0% var(--aqi-percent, 36.6%), #27272a var(--aqi-percent, 36.6%) 100%);
+
+    .gauge-wrapper {
+      background: conic-gradient(var(--gauge-color, #10b981) 0% var(--gauge-percent, 50%), #27272a var(--gauge-percent, 50%) 100%);
       transition: all 1s ease-in-out;
     }
-    :root {
-      --aqi-percent: 36.6%;
-      --aqi-color: #f59e0b;
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 var(--gauge-color, #10b981); }
+      70% { box-shadow: 0 0 0 20px rgba(16, 185, 129, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
     }
-    @keyframes aqi-pulse {
-      0% { box-shadow: 0 0 0 0 var(--aqi-color); }
-      70% { box-shadow: 0 0 0 20px rgba(245, 158, 11, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
-    }
-    .aqi-pulse-animate {
-      animation: aqi-pulse 2s infinite;
-    }
+    .pulse-animate { animation: pulse 2s infinite; }
+
     .datasheet th, .datasheet td {
       padding: 0.75rem;
       text-align: left;
@@ -77,7 +72,7 @@
     }
   </style>
 
-  <!-- Firebase -->
+  <!-- Firebase only initialised, not used further -->
   <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
     import { getDatabase, ref, onValue } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
@@ -107,21 +102,30 @@
   <div id="login-gate" class="fixed inset-0 bg-gray-900/95 flex flex-col items-center justify-center z-50 backdrop-blur-sm">
     <div class="bg-gray-800/90 p-8 md:p-12 rounded-3xl shadow-2xl w-full max-w-sm text-center border-t-4 border-emerald-500">
       <h2 class="text-3xl font-bold text-emerald-400 mb-6">Team Evergreen</h2>
-      <p id="login-status-message" class="text-gray-400 mb-6">Live AQI/pH/TDS/Turbidity + Team Showcase</p>
-      <input type="email" id="user-id-input" placeholder="Username" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl mb-4 text-white focus:ring-2 focus:ring-emerald-500">
-      <input type="password" id="password-input" placeholder="Password" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl mb-4 text-white focus:ring-2 focus:ring-emerald-500">
-      <button id="login-button" onclick="attemptLogin()" class="w-full px-6 py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-bold rounded-xl shadow-lg hover:from-emerald-600 hover:to-emerald-700 transition-all duration-300">
-        Enter Dashboard <span id="login-spinner" class="hidden ml-2 animate-spin inline-block w-5 h-5 border-2 border-white border-t-transparent rounded-full"></span>
+      <p id="login-status-message" class="text-gray-400 mb-6">
+        Live AQI/pH/TDS/Turbidity + Team Showcase
+      </p>
+      <input type="text" id="user-id-input" placeholder="Username"
+             class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl mb-4 text-white focus:ring-2 focus:ring-emerald-500">
+      <input type="password" id="password-input" placeholder="Password"
+             class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl mb-4 text-white focus:ring-2 focus:ring-emerald-500">
+      <button id="login-button" onclick="attemptLogin()"
+              class="w-full px-6 py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-bold rounded-xl shadow-lg hover:from-emerald-600 hover:to-emerald-700 transition-all duration-300">
+        Enter Dashboard
+        <span id="login-spinner"
+              class="hidden ml-2 animate-spin inline-block w-5 h-5 border-2 border-white border-t-transparent rounded-full"></span>
       </button>
-      
     </div>
   </div>
 
-  <div id="auth-status" class="fixed top-4 left-4 p-3 text-xs rounded-lg bg-gray-800/90 text-emerald-400 z-50 backdrop-blur-sm border border-emerald-500/50 font-mono">🔄 Initializing...</div>
+  <div id="auth-status"
+       class="fixed top-4 left-4 p-3 text-xs rounded-lg bg-gray-800/90 text-emerald-400 z-50 backdrop-blur-sm border border-emerald-500/50 font-mono">
+    🔄 Initializing...
+  </div>
 
   <!-- MAIN CONTENT -->
   <div id="main-content" class="hidden">
-    <!-- Hero Section -->
+    <!-- Hero -->
     <section class="h-screen relative flex items-center justify-center text-center overflow-hidden">
       <div class="video-background">
         <video autoplay muted loop playsinline>
@@ -130,363 +134,481 @@
       </div>
       <div class="relative z-10 p-8 md:p-12 rounded-3xl bg-black/70 shadow-2xl backdrop-blur-sm max-w-4xl mx-4">
         <h1 class="text-5xl md:text-7xl font-black bg-gradient-to-r from-emerald-400 via-blue-400 to-yellow-400 bg-clip-text text-transparent mb-6 inline-flex items-center gap-3 justify-center">
-  <span class="text-6xl md:text-8xl">🌿</span>
-  <span>Team Evergreen</span>
-</h1>
-
->
-        <p class="text-xl md:text-2xl text-emerald-200 mb-8 max-w-2xl mx-auto">Live AQI • pH • TDS • Turbidity Dashboard + Team Showcase</p>
+          <span class="text-6xl md:text-8xl">🌿</span>
+          <span>Team Evergreen</span>
+        </h1>
+        <p class="text-xl md:text-2xl text-emerald-200 mb-8 max-w-2xl mx-auto">
+          Live AQI • pH • TDS • Turbidity Dashboard + Team Showcase
+        </p>
         <div class="flex flex-col sm:flex-row gap-4 justify-center">
-          <button onclick="document.getElementById('dashboard').scrollIntoView({behavior:'smooth'})" class="px-8 py-3 bg-emerald-600 text-white font-bold rounded-xl shadow-lg hover:bg-emerald-500 transition-all duration-300">📊 Live Data</button>
-          <button onclick="document.getElementById('team-section').scrollIntoView({behavior:'smooth'})" class="px-8 py-3 bg-blue-600 text-white font-bold rounded-xl shadow-lg hover:bg-blue-500 transition-all duration-300">👥 Meet Team</button>
+          <button onclick="document.getElementById('dashboard').scrollIntoView({behavior:'smooth'})"
+                  class="px-8 py-3 bg-emerald-600 text-white font-bold rounded-xl shadow-lg hover:bg-emerald-500 transition-all duration-300">
+            📊 Live Data
+          </button>
+          <button onclick="document.getElementById('team-section').scrollIntoView({behavior:'smooth'})"
+                  class="px-8 py-3 bg-blue-600 text-white font-bold rounded-xl shadow-lg hover:bg-blue-500 transition-all duration-300">
+            👥 Meet Team
+          </button>
         </div>
       </div>
     </section>
 
-    <!-- LIVE DASHBOARD -->
+    <!-- DASHBOARD -->
     <section id="dashboard" class="py-24 bg-gray-900/30">
       <div class="max-w-6xl mx-auto px-4">
-        <h2 class="text-5xl md:text-6xl font-black text-center mb-4 bg-gradient-to-r from-emerald-400 via-blue-400 to-yellow-400 bg-clip-text text-transparent">Live Sensor Dashboard</h2>
-        <p class="text-xl text-gray-400 text-center mb-20 font-light">Real-time AQI • pH • TDS from Thingspeak Channel 3192039</p>
+        <h2 class="text-5xl md:text-6xl font-black text-center mb-4 bg-gradient-to-r from-emerald-400 via-blue-400 to-yellow-400 bg-clip-text text-transparent">
+          Live Sensor Dashboard
+        </h2>
+        <p class="text-xl text-gray-400 text-center mb-20 font-light">
+          Real-time AQI • pH • TDS • Turbidity from ThingSpeak Channel 3192039
+        </p>
 
-        <!-- Gauge + Status -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-16">
-          <div class="text-center lg:text-left">
-            <p class="text-xl text-gray-400 mb-4">📍 Location: <span id="location" class="font-bold text-emerald-400">Bengaluru Live</span></p>
-            <h3 id="aqi-status-text" class="text-5xl font-black text-yellow-400 mb-4">Moderate Quality</h3>
-            <p class="text-lg text-gray-400">Last Update: <span id="last-updated">Loading...</span></p>
-          </div>
-          <div class="flex justify-center">
-            <div id="aqi-gauge" class="w-64 h-64 lg:w-80 lg:h-80 rounded-full aqi-gauge-wrapper border-8 border-gray-700/50 aqi-pulse-animate shadow-2xl">
-              <div class="w-40 h-40 lg:w-52 lg:h-52 bg-gray-900/95 rounded-full flex flex-col items-center justify-center shadow-xl">
-                <span id="aqi-value" class="text-5xl lg:text-6xl font-black text-yellow-400">55</span>
-                <span class="text-xl text-yellow-300 font-semibold">AQI</span>
+        <!-- GAUGES -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-12 mb-16">
+          <!-- AQI -->
+          <div class="flex flex-col items-center">
+            <h3 class="text-2xl font-bold text-yellow-400 mb-6">🌫️ AQI</h3>
+            <div id="aqi-gauge"
+                 class="w-64 h-64 lg:w-72 lg:h-72 gauge-wrapper border-8 border-gray-700/50 pulse-animate shadow-2xl rounded-full flex items-center justify-center">
+              <div class="w-32 h-32 lg:w-36 lg:h-36 bg-gray-900/95 rounded-full flex flex-col items-center justify-center shadow-xl">
+                <span id="aqi-value" class="text-4xl lg:text-5xl font-black text-yellow-400">0</span>
+                <span class="text-lg text-yellow-300 font-semibold">AQI</span>
               </div>
             </div>
+            <p id="aqi-status-text" class="text-xl font-bold text-yellow-400 mt-4 text-center">Loading…</p>
+          </div>
+
+          <!-- pH -->
+          <div class="flex flex-col items-center">
+            <h3 class="text-2xl font-bold text-blue-400 mb-6">🧪 pH</h3>
+            <div id="ph-gauge"
+                 class="w-64 h-64 lg:w-72 lg:h-72 gauge-wrapper border-8 border-gray-700/50 pulse-animate shadow-2xl rounded-full flex items-center justify-center">
+              <div class="w-32 h-32 lg:w-36 lg:h-36 bg-gray-900/95 rounded-full flex flex-col items-center justify-center shadow-xl">
+                <span id="ph-gauge-value" class="text-4xl lg:text-5xl font-black text-blue-400">0</span>
+                <span class="text-lg text-blue-300 font-semibold">pH</span>
+              </div>
+            </div>
+            <p id="ph-status-text" class="text-xl font-bold text-emerald-400 mt-4 text-center">Loading…</p>
+          </div>
+
+          <!-- TDS -->
+          <div class="flex flex-col items-center">
+            <h3 class="text-2xl font-bold text-yellow-400 mb-6">💧 TDS</h3>
+            <div id="tds-gauge"
+                 class="w-64 h-64 lg:w-72 lg:h-72 gauge-wrapper border-8 border-gray-700/50 pulse-animate shadow-2xl rounded-full flex items-center justify-center">
+              <div class="w-32 h-32 lg:w-36 lg:h-36 bg-gray-900/95 rounded-full flex flex-col items-center justify-center shadow-xl">
+                <span id="tds-gauge-value" class="text-4xl lg:text-5xl font-black text-yellow-400">0</span>
+                <span class="text-lg text-yellow-300 font-semibold">ppm</span>
+              </div>
+            </div>
+            <p id="tds-status-text" class="text-xl font-bold text-emerald-400 mt-4 text-center">Loading…</p>
+          </div>
+
+          <!-- Turbidity -->
+          <div class="flex flex-col items-center">
+            <h3 class="text-2xl font-bold text-cyan-400 mb-6">🌊 Turbidity</h3>
+            <div id="turbidity-gauge"
+                 class="w-64 h-64 lg:w-72 lg:h-72 gauge-wrapper border-8 border-gray-700/50 pulse-animate shadow-2xl rounded-full flex items-center justify-center">
+              <div class="w-32 h-32 lg:w-36 lg:h-36 bg-gray-900/95 rounded-full flex flex-col items-center justify-center shadow-xl">
+                <span id="turbidity-gauge-value" class="text-4xl lg:text-5xl font-black text-cyan-400">0</span>
+                <span class="text-lg text-cyan-300 font-semibold">NTU</span>
+              </div>
+            </div>
+            <p id="turbidity-status-text" class="text-xl font-bold text-emerald-400 mt-4 text-center">Loading…</p>
           </div>
         </div>
 
-        <!-- 3 Live Graphs -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+        <p class="text-lg text-gray-400 text-center mb-20 font-light">
+          Last Update: <span id="last-updated">Loading…</span>
+        </p>
+
+        <!-- 4 LIVE GRAPHS (like ThingSpeak) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
           <div>
-            <h3 class="text-2xl font-bold text-emerald-400 mb-4 text-center flex items-center justify-center gap-2">📈 AQI Trend (24h)</h3>
-            <div class="chart-container">
-              <canvas id="aqiChart"></canvas>
-            </div>
+            <h3 class="text-2xl font-bold text-yellow-400 mb-4 text-center">📈 AQI Trend (recent)</h3>
+            <div class="chart-container"><canvas id="aqiChart"></canvas></div>
           </div>
           <div>
-            <h3 class="text-2xl font-bold text-blue-400 mb-4 text-center flex items-center justify-center gap-2">🧪 pH Trend (24h)</h3>
-            <div class="chart-container">
-              <canvas id="phChart"></canvas>
-            </div>
+            <h3 class="text-2xl font-bold text-blue-400 mb-4 text-center">🧪 pH Trend (recent)</h3>
+            <div class="chart-container"><canvas id="phChart"></canvas></div>
           </div>
           <div>
-            <h3 class="text-2xl font-bold text-yellow-400 mb-4 text-center flex items-center justify-center gap-2">💧 TDS Trend (24h)</h3>
-            <div class="chart-container">
-              <canvas id="tdsChart"></canvas>
-            </div>
+            <h3 class="text-2xl font-bold text-yellow-400 mb-4 text-center">💧 TDS Trend (recent)</h3>
+            <div class="chart-container"><canvas id="tdsChart"></canvas></div>
+          </div>
+          <div>
+            <h3 class="text-2xl font-bold text-cyan-400 mb-4 text-center">🌊 Turbidity Trend (recent)</h3>
+            <div class="chart-container"><canvas id="turbidityChart"></canvas></div>
           </div>
         </div>
 
-        <!-- Current Readings Table -->
+        <!-- TABLE -->
         <div class="bg-gray-800/50 backdrop-blur-xl p-8 rounded-3xl shadow-2xl max-w-4xl mx-auto border border-gray-700/50">
           <h3 class="text-3xl font-bold text-emerald-400 mb-8 text-center">📊 Current Readings</h3>
           <div class="overflow-x-auto">
             <table class="w-full datasheet text-lg">
               <thead>
-                <tr><th>Parameter</th><th>Value</th><th>Status</th><th>Range</th></tr>
+              <tr>
+                <th>Parameter</th><th>Value</th><th>Status</th>
+              </tr>
               </thead>
               <tbody>
-                <tr><td><span class="font-mono text-emerald-400">AQI</span></td><td id="aqi-current" class="font-mono text-2xl font-black text-yellow-400">55</td><td class="text-yellow-400 font-bold px-3 py-1 rounded-full bg-yellow-400/10">Moderate</td><td>0-150 Good</td></tr>
-                <tr><td><span class="font-mono text-blue-400">pH</span></td><td id="ph-current" class="font-mono text-2xl font-black text-blue-400">7.2</td><td class="text-emerald-400 font-bold px-3 py-1 rounded-full bg-emerald-400/10">Optimal</td><td>6.5-8.5</td></tr>
-                <tr><td><span class="font-mono text-yellow-400">TDS (ppm)</span></td><td id="tds-current" class="font-mono text-2xl font-black text-yellow-400">450</td><td class="text-emerald-400 font-bold px-3 py-1 rounded-full bg-emerald-400/10">Good</td><td>0-1000</td></tr>
+              <tr>
+                <td><span class="font-mono text-yellow-400">AQI</span></td>
+                <td id="aqi-current" class="font-mono text-2xl font-black text-yellow-400">0</td>
+                <td id="aqi-current-status" class="text-yellow-400 font-bold px-3 py-1 rounded-full bg-yellow-400/10">–</td>
+              </tr>
+              <tr>
+                <td><span class="font-mono text-blue-400">pH</span></td>
+                <td id="ph-current" class="font-mono text-2xl font-black text-blue-400">0</td>
+                <td id="ph-current-status" class="text-emerald-400 font-bold px-3 py-1 rounded-full bg-emerald-400/10">–</td>
+              </tr>
+              <tr>
+                <td><span class="font-mono text-yellow-400">TDS (ppm)</span></td>
+                <td id="tds-current" class="font-mono text-2xl font-black text-yellow-400">0</td>
+                <td id="tds-current-status" class="text-emerald-400 font-bold px-3 py-1 rounded-full bg-emerald-400/10">–</td>
+              </tr>
+              <tr>
+                <td><span class="font-mono text-cyan-400">Turbidity (NTU)</span></td>
+                <td id="turbidity-current" class="font-mono text-2xl font-black text-cyan-400">0</td>
+                <td id="turbidity-current-status" class="text-emerald-400 font-bold px-3 py-1 rounded-full bg-emerald-400/10">–</td>
+              </tr>
               </tbody>
             </table>
           </div>
           <div class="mt-8 pt-8 border-t border-gray-700 text-center text-sm text-gray-500 font-mono space-y-1">
-            <p>🔴 LIVE: Thingspeak Channel 3192039 • API: 5415S24IAJVBDHNK</p>
-            <p>📡 Updates every 15s • Field1=AQI • Field2=pH • Field3=TDS</p>
+            <p>🔴 LIVE: ThingSpeak Channel 3192039 • API: 5415S24IAJVBDHNK</p>
+            <p>📡 Field1=AQI • Field2=pH • Field3=Turbidity • Field4=TDS</p>
           </div>
         </div>
       </div>
     </section>
 
-    <!--  TEAM MEMBERS - ALL ANIMATED -->
+    <!-- TEAM SECTION WITH 5 MEMBERS -->
     <section id="team-section" class="py-24 bg-gray-950 border-t border-gray-800">
       <div class="max-w-6xl mx-auto px-4">
-        <h2 class="text-5xl md:text-6xl font-black text-center mb-20 bg-gradient-to-r from-emerald-400 to-emerald-500 bg-clip-text text-transparent">Meet The Team</h2>
-        
+        <h2 class="text-5xl md:text-6xl font-black text-center mb-20 bg-gradient-to-r from-emerald-400 to-emerald-500 bg-clip-text text-transparent">
+          Meet The Team
+        </h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 max-w-5xl mx-auto">
-          <!-- Arkodeep -->
+
+          <!-- Arkodeep Banerjee -->
           <div class="team-member-card bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm p-8 rounded-3xl shadow-2xl hover:shadow-emerald-500/30 hover:ring-4 ring-emerald-500/20 border border-gray-700/50 hover:border-emerald-400/50 transition-all duration-500">
-            <img src="https://placehold.co/120x120/065f46/ffffff?text=A.B." alt="Arkodeep" class="w-28 h-28 rounded-full mx-auto mb-6 border-4 border-emerald-400 shadow-xl hover:scale-110 transition-all duration-300">
+            <div class="w-28 h-28 rounded-full mx-auto mb-6 border-4 border-emerald-400 shadow-xl flex items-center justify-center bg-emerald-900 text-3xl font-bold text-white">
+              A.B.
+            </div>
             <h3 class="text-2xl md:text-3xl font-bold text-center text-white mb-3">Arkodeep Banerjee</h3>
             <p class="text-xl text-emerald-400 text-center font-semibold mb-4">Coding + Electronics</p>
-            <p class="text-center text-gray-300 leading-relaxed">Frontend coding specialist and Electronics</p>
+            <p class="text-center text-gray-300 leading-relaxed">
+              Frontend coding specialist and electronics.
+            </p>
           </div>
 
-          <!-- Anjney -->
+          <!-- Anjney Rohit Shah -->
           <div class="team-member-card bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm p-8 rounded-3xl shadow-2xl hover:shadow-emerald-500/30 hover:ring-4 ring-emerald-500/20 border border-gray-700/50 hover:border-emerald-400/50 transition-all duration-500">
-            <img src="https://placehold.co/120x120/065f46/ffffff?text=A.R.S." alt="Anjney" class="w-28 h-28 rounded-full mx-auto mb-6 border-4 border-emerald-400 shadow-xl hover:scale-110 transition-all duration-300">
+            <div class="w-28 h-28 rounded-full mx-auto mb-6 border-4 border-emerald-400 shadow-xl flex items-center justify-center bg-emerald-900 text-3xl font-bold text-white">
+              A.R.S.
+            </div>
             <h3 class="text-2xl md:text-3xl font-bold text-center text-white mb-3">Anjney Rohit Shah</h3>
             <p class="text-xl text-emerald-400 text-center font-semibold mb-4">Coding + Electronics</p>
-            <p class="text-center text-gray-300 leading-relaxed">Backend coding specialist and Electronics</p>
+            <p class="text-center text-gray-300 leading-relaxed">
+              Backend coding specialist and electronics.
+            </p>
           </div>
 
-          <!-- Vijay -->
+          <!-- SP Vijay Moudgalya -->
           <div class="team-member-card bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm p-8 rounded-3xl shadow-2xl hover:shadow-emerald-500/30 hover:ring-4 ring-emerald-500/20 border border-gray-700/50 hover:border-emerald-400/50 transition-all duration-500">
-            <img src="https://placehold.co/120x120/065f46/ffffff?text=S.V.M." alt="SP Vijay" class="w-28 h-28 rounded-full mx-auto mb-6 border-4 border-emerald-400 shadow-xl hover:scale-110 transition-all duration-300">
+            <div class="w-28 h-28 rounded-full mx-auto mb-6 border-4 border-emerald-400 shadow-xl flex items-center justify-center bg-emerald-900 text-3xl font-bold text-white">
+              S.V.M.
+            </div>
             <h3 class="text-2xl md:text-3xl font-bold text-center text-white mb-3">SP Vijay Moudgalya</h3>
             <p class="text-xl text-emerald-400 text-center font-semibold mb-4">Designing</p>
-            <p class="text-center text-gray-300 leading-relaxed">Designing and Project Documentation</p>
+            <p class="text-center text-gray-300 leading-relaxed">
+              Designing and project documentation.
+            </p>
           </div>
 
-          <!-- Rachit -->
+          <!-- Rachit Kalya -->
           <div class="team-member-card bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm p-8 rounded-3xl shadow-2xl hover:shadow-emerald-500/30 hover:ring-4 ring-emerald-500/20 border border-gray-700/50 hover:border-emerald-400/50 transition-all duration-500">
-            <img src="https://placehold.co/120x120/065f46/ffffff?text=R.K." alt="Rachit" class="w-28 h-28 rounded-full mx-auto mb-6 border-4 border-emerald-400 shadow-xl hover:scale-110 transition-all duration-300">
+            <div class="w-28 h-28 rounded-full mx-auto mb-6 border-4 border-emerald-400 shadow-xl flex items-center justify-center bg-emerald-900 text-3xl font-bold text-white">
+              R.K.
+            </div>
             <h3 class="text-2xl md:text-3xl font-bold text-center text-white mb-3">Rachit Kalya</h3>
             <p class="text-xl text-emerald-400 text-center font-semibold mb-4">Designing</p>
-            <p class="text-center text-gray-300 leading-relaxed">Designing and Documentation</p>
+            <p class="text-center text-gray-300 leading-relaxed">
+              Designing and documentation.
+            </p>
           </div>
 
-          <!-- Shounak -->
+          <!-- Shounak Mandal -->
           <div class="team-member-card bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm p-8 rounded-3xl shadow-2xl hover:shadow-emerald-500/30 hover:ring-4 ring-emerald-500/20 border border-gray-700/50 hover:border-emerald-400/50 transition-all duration-500">
-            <img src="https://placehold.co/120x120/065f46/ffffff?text=S.M." alt="Shounak" class="w-28 h-28 rounded-full mx-auto mb-6 border-4 border-emerald-400 shadow-xl hover:scale-110 transition-all duration-300">
+            <div class="w-28 h-28 rounded-full mx-auto mb-6 border-4 border-emerald-400 shadow-xl flex items-center justify-center bg-emerald-900 text-3xl font-bold text-white">
+              S.M.
+            </div>
             <h3 class="text-2xl md:text-3xl font-bold text-center text-white mb-3">Shounak Mandal</h3>
             <p class="text-xl text-emerald-400 text-center font-semibold mb-4">Electronics</p>
-            <p class="text-center text-gray-300 leading-relaxed">Electronics</p>
+            <p class="text-center text-gray-300 leading-relaxed">
+              Electronics.
+            </p>
           </div>
+
         </div>
       </div>
     </section>
   </div>
 
-  <!--  COMPLETE WORKING JAVASCRIPT -->
+  <!-- JAVASCRIPT -->
   <script>
-    let aqiChart, phChart, tdsChart, aqiData = [], phData = [], tdsData = [];
-    const maxPoints = 24;
     const channelId = '3192039';
     const THINGSPEAK_READ_API = '5415S24IAJVBDHNK';
 
-    //  FIXED LOGIN - WORKS PERFECTLY
-    function attemptLogin() {
-      const email = document.getElementById('user-id-input').value.trim();
-      const password = document.getElementById('password-input').value.trim();
-      const loginStatus = document.getElementById('login-status-message');
-      const loginSpinner = document.getElementById('login-spinner');
-      const loginButton = document.getElementById('login-button');
+    let aqiChart, phChart, tdsChart, turbidityChart;
+    let aqiData = [], phData = [], tdsData = [], turbidityData = [];
+    const maxPoints = 40;   // number of recent points to show
 
-      if (email === 'TEAM EVERGREEN' && password === 'TEAM4') {
-        loginStatus.textContent = '✅ Accessing Dashboard...';
-        loginStatus.className = 'text-emerald-400';
-        loginSpinner.classList.remove('hidden');
-        loginButton.disabled = true;
+    function attemptLogin() {
+      const user = document.getElementById('user-id-input').value.trim();
+      const pass = document.getElementById('password-input').value.trim();
+      const status = document.getElementById('login-status-message');
+      const spinner = document.getElementById('login-spinner');
+      const btn = document.getElementById('login-button');
+
+      if (user === 'TEAM EVERGREEN' && pass === 'TEAM4') {
+        status.textContent = '✅ Accessing Dashboard...';
+        status.className = 'text-emerald-400';
+        spinner.classList.remove('hidden');
+        btn.disabled = true;
 
         setTimeout(() => {
           document.getElementById('login-gate').classList.add('hidden');
           document.getElementById('main-content').classList.remove('hidden');
-          document.getElementById('auth-status').textContent = `🔴 LIVE: Channel ${channelId} Connected`;
-          
+          document.getElementById('auth-status').textContent =
+            `🔴 LIVE: Channel ${channelId} Connected`;
           initDashboard();
-        }, 1000);
+        }, 800);
       } else {
-        loginStatus.textContent = '❌ Wrong credentials! Ask any team member for the username & password';
-        loginStatus.className = 'text-red-400 animate-pulse';
-        loginSpinner.classList.add('hidden');
-        loginButton.disabled = false;
+        status.textContent = '❌ Wrong credentials! Ask team for username & password';
+        status.className = 'text-red-400 animate-pulse';
+        spinner.classList.add('hidden');
+        btn.disabled = false;
       }
     }
 
-    function initDashboard() {
-      initCharts();
-      startDataPolling();
-      animateTeamCards();
-    }
-
-
-function initCharts() {
-  const charts = [
-    {id: 'aqiChart', color: '#10b981', maxY: 200, label: 'AQI'},
-    {id: 'phChart', color: '#3b82f6', maxY: 14, label: 'pH'},
-    {id: 'tdsChart', color: '#f59e0b', maxY: 2000, label: 'TDS (ppm)'}
-  ];
-
-  charts.forEach((chartConfig, index) => {
-    const canvas = document.getElementById(chartConfig.id);
-    if (canvas) {
-      const chart = new Chart(canvas.getContext('2d'), {
-        type: 'line',
-        data: {
-          labels: Array(24).fill('').map((_, i) => `T-${i*15}m`),
-          datasets: [{
-            label: chartConfig.label,
-            data: new Array(24).fill(50),
-            borderColor: chartConfig.color,
-            backgroundColor: chartConfig.color + '20',
-            tension: 0.4,
-            fill: true,
-            pointRadius: 6,
-            borderWidth: 3
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: {
-            y: { beginAtZero: chartConfig.id !== 'phChart', max: chartConfig.maxY, grid: {color: '#37415180'}, ticks: {color: '#9ca3af'} },
-            x: { grid: {color: '#37415180'}, ticks: {color: '#9ca3af', maxTicksLimit: 8} }
-          },
-          plugins: { legend: { labels: { color: '#f9fafb', font: {size: 14, weight: 'bold'} } } }
-        }
-      });
-      
-      //  FIXED: Assign charts globally
-      if (chartConfig.id === 'aqiChart') aqiChart = chart;
-      if (chartConfig.id === 'phChart') phChart = chart;
-      if (chartConfig.id === 'tdsChart') tdsChart = chart;
-    }
-  });
-}
-
-
-    //  FIXED LIVE THINGSPEAK DATA
-    async function startDataPolling() {
-      // First load simulation data, then switch to live
-      setTimeout(async () => {
-        await fetchLiveData();
-        setInterval(fetchLiveData, 15000); // Every 15 seconds
-      }, 2000);
-    }
-
-    async function fetchLiveData() {
-      try {
-        const url = `https://api.thingspeak.com/channels/${channelId}/feeds.json?api_key=${THINGSPEAK_READ_API}&results=1`;
-        const response = await fetch(url);
-        const json = await response.json();
-        
-        if (json.feeds && json.feeds.length > 0) {
-          const latest = json.feeds[0];
-          const data = {
-            value: parseFloat(latest.field1) || 55,
-            ph: parseFloat(latest.field2) || 7.2,
-            tds: parseFloat(latest.field3) || 450,
-            timestamp: new Date(latest.created_at || Date.now()).toLocaleString()
-          };
-          
-          updateDashboard(data);
-          updateGraphs(data);
-          document.getElementById('auth-status').textContent = 
-            `🔴 LIVE: Ch${channelId} AQI:${Math.round(data.value)} pH:${data.ph.toFixed(1)}`;
-        } else {
-          // Fallback simulation
-          simulateData();
-        }
-      } catch (error) {
-        console.error('Thingspeak error:', error);
-        document.getElementById('auth-status').textContent = '⚠️ Simulation Mode';
-        simulateData();
-      }
-    }
-
-    function simulateData() {
-      const data = {
-        value: 30 + Math.random() * 90,
-        ph: 6.5 + Math.random() * 1.5,
-        tds: 200 + Math.random() * 800,
-        timestamp: new Date().toLocaleString()
-      };
-      updateDashboard(data);
-      updateGraphs(data);
-    }
-
-    function updateDashboard(data) {
-      const aqi = data.value;
-      const percent = Math.min(aqi / 150, 1) * 100;
-      const color = aqi > 100 ? '#ef4444' : aqi > 50 ? '#f59e0b' : '#10b981';
-      const status = aqi > 100 ? 'Unhealthy' : aqi > 50 ? 'Moderate' : 'Good';
-
-      document.documentElement.style.setProperty('--aqi-percent', `${percent}%`);
-      document.getElementById('aqi-gauge').style.background = `conic-gradient(${color} 0% ${percent}%, #27272a ${percent}% 100%)`;
-      document.getElementById('aqi-gauge').style.setProperty('--aqi-color', color);
-      document.getElementById('aqi-value').style.color = color;
-      document.getElementById('aqi-value').textContent = Math.round(aqi);
-      document.getElementById('aqi-status-text').innerHTML = `${status} <span class="text-3xl">Quality</span>`;
-      document.getElementById('aqi-status-text').style.color = color;
-      document.getElementById('last-updated').textContent = data.timestamp;
-
-      document.getElementById('aqi-current').textContent = Math.round(aqi);
-      document.getElementById('ph-current').textContent = data.ph.toFixed(1);
-      document.getElementById('tds-current').textContent = Math.round(data.tds);
-    }
-
-    function updateGraphs(data) {
-      const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
-      
-      aqiData.push(data.value); 
-      phData.push(data.ph); 
-      tdsData.push(data.tds);
-      
-      if (aqiData.length > maxPoints) {
-        aqiData.shift(); 
-        phData.shift(); 
-        tdsData.shift();
-      }
-
-      // Update AQI chart
-      if (aqiChart) {
-        aqiChart.data.labels.push(time);
-        aqiChart.data.labels.shift();
-        aqiChart.data.datasets[0].data.push(data.value);
-        aqiChart.data.datasets[0].data.shift();
-        aqiChart.update('none');
-      }
-
-      // Update pH chart
-      if (phChart) {
-        phChart.data.labels.push(time);
-        phChart.data.labels.shift();
-        phChart.data.datasets[0].data.push(data.ph);
-        phChart.data.datasets[0].data.shift();
-        phChart.update('none');
-      }
-
-      // Update TDS chart
-      if (tdsChart) {
-        tdsChart.data.labels.push(time);
-        tdsChart.data.labels.shift();
-        tdsChart.data.datasets[0].data.push(data.tds);
-        tdsChart.data.datasets[0].data.shift();
-        tdsChart.update('none');
-      }
-    }
-
-    function animateTeamCards() {
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-          }
-        });
-      }, { threshold: 0.1 });
-
-      document.querySelectorAll('.team-member-card').forEach(card => {
-        observer.observe(card);
-      });
-    }
-
-    // Enter key support
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && document.getElementById('login-gate').classList.contains('z-50')) {
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Enter' &&
+          !document.getElementById('login-gate').classList.contains('hidden')) {
         attemptLogin();
       }
     });
 
-    // Initialize charts globally
-    window.aqiChart = aqiChart;
-    window.phChart = phChart;
-    window.tdsChart = tdsChart;
+    function initDashboard() {
+      initCharts();
+      fetchHistory();     // load recent data like ThingSpeak charts
+      startDataPolling(); // then keep updating
+      animateTeamCards();
+    }
+
+    function initCharts() {
+      const def = (id, color, maxY, label) => {
+        const ctx = document.getElementById(id).getContext('2d');
+        return new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: [],
+            datasets: [{
+              label,
+              data: [],
+              borderColor: color,
+              backgroundColor: color + '33',
+              tension: 0.4,
+              fill: true,
+              pointRadius: 0,
+              borderWidth: 2
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: { beginAtZero: true, max: maxY, grid: { color: '#37415180' }, ticks: { color: '#9ca3af' } },
+              x: { grid: { color: '#37415140' }, ticks: { color: '#9ca3af', maxTicksLimit: 6 } }
+            },
+            plugins: { legend: { labels: { color: '#e5e7eb' } } }
+          }
+        });
+      };
+      aqiChart       = def('aqiChart',       '#f59e0b', 200, 'AQI');
+      phChart        = def('phChart',        '#3b82f6', 14,  'pH');
+      tdsChart       = def('tdsChart',       '#f59e0b', 1200,'TDS (ppm)');
+      turbidityChart = def('turbidityChart', '#06b6d4', 100, 'Turbidity (NTU)');
+    }
+
+    // Load last N points from ThingSpeak so graphs look like channel charts
+    async function fetchHistory() {
+      try {
+        const url =
+          `https://api.thingspeak.com/channels/${channelId}/feeds.json?api_key=${THINGSPEAK_READ_API}&results=${maxPoints}`;
+        const res = await fetch(url);
+        const json = await res.json();
+        if (!json.feeds) return;
+
+        aqiData = [];
+        phData = [];
+        tdsData = [];
+        turbidityData = [];
+        const labels = [];
+
+        json.feeds.forEach(feed => {
+          const t = new Date(feed.created_at);
+          const label = t.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          labels.push(label);
+          aqiData.push(parseFloat(feed.field1) || 0);
+          phData.push(parseFloat(feed.field2) || 0);
+          turbidityData.push(parseFloat(feed.field3) || 0);
+          tdsData.push(parseFloat(feed.field4) || 0);
+        });
+
+        // apply to charts
+        aqiChart.data.labels = [...labels];
+        phChart.data.labels = [...labels];
+        tdsChart.data.labels = [...labels];
+        turbidityChart.data.labels = [...labels];
+
+        aqiChart.data.datasets[0].data = [...aqiData];
+        phChart.data.datasets[0].data = [...phData];
+        tdsChart.data.datasets[0].data = [...tdsData];
+        turbidityChart.data.datasets[0].data = [...turbidityData];
+
+        aqiChart.update();
+        phChart.update();
+        tdsChart.update();
+        turbidityChart.update();
+
+        if (json.feeds.length > 0) {
+          const last = json.feeds[json.feeds.length - 1];
+          updateDashboard({
+            aqi: parseFloat(last.field1) || 0,
+            ph: parseFloat(last.field2) || 0,
+            turbidity: parseFloat(last.field3) || 0,
+            tds: parseFloat(last.field4) || 0,
+            timestamp: new Date(last.created_at || Date.now()).toLocaleString()
+          });
+        }
+      } catch (err) {
+        console.error('ThingSpeak history error', err);
+      }
+    }
+
+    function startDataPolling() {
+      fetchLiveData();
+      setInterval(fetchLiveData, 15000);
+    }
+
+    // latest sample only
+    async function fetchLiveData() {
+      try {
+        const url =
+          `https://api.thingspeak.com/channels/${channelId}/feeds.json?api_key=${THINGSPEAK_READ_API}&results=1`;
+        const res = await fetch(url);
+        const json = await res.json();
+
+        if (json.feeds && json.feeds.length > 0) {
+          const f = json.feeds[0];
+          const data = {
+            aqi: parseFloat(f.field1) || 0,
+            ph: parseFloat(f.field2) || 0,
+            turbidity: parseFloat(f.field3) || 0,
+            tds: parseFloat(f.field4) || 0,
+            timestamp: new Date(f.created_at || Date.now()).toLocaleString()
+          };
+          updateDashboard(data);
+          updateGraphs(data);
+          document.getElementById('auth-status').textContent =
+            `🔴 LIVE: Ch${channelId} AQI:${Math.round(data.aqi)} pH:${data.ph.toFixed(1)} TDS:${Math.round(data.tds)} Turb:${Math.round(data.turbidity)}`;
+        }
+      } catch (e) {
+        console.error('ThingSpeak error', e);
+      }
+    }
+
+    function updateDashboard(d) {
+      document.getElementById('last-updated').textContent = d.timestamp;
+
+      // AQI gauge
+      const aqiPct = Math.min(d.aqi / 150, 1) * 100;
+      const aqiColor = d.aqi > 100 ? '#ef4444' : d.aqi > 50 ? '#f59e0b' : '#10b981';
+      const aqiGauge = document.getElementById('aqi-gauge');
+      aqiGauge.style.setProperty('--gauge-color', aqiColor);
+      aqiGauge.style.setProperty('--gauge-percent', `${aqiPct}%`);
+      document.getElementById('aqi-value').textContent = Math.round(d.aqi);
+      const aqiStatus = d.aqi > 100 ? 'Unhealthy' : d.aqi > 50 ? 'Moderate' : 'Good';
+      document.getElementById('aqi-status-text').textContent = aqiStatus;
+      document.getElementById('aqi-current').textContent = Math.round(d.aqi);
+      document.getElementById('aqi-current-status').textContent = aqiStatus;
+
+      // pH gauge
+      const phPct = Math.min((d.ph / 14) * 100, 100);
+      const phColor = (d.ph < 6.5 || d.ph > 8.5) ? '#ef4444' : '#10b981';
+      const phGauge = document.getElementById('ph-gauge');
+      phGauge.style.setProperty('--gauge-color', phColor);
+      phGauge.style.setProperty('--gauge-percent', `${phPct}%`);
+      document.getElementById('ph-gauge-value').textContent = d.ph.toFixed(1);
+      const phStatus = (d.ph < 6.5 || d.ph > 8.5) ? 'Out of range' : 'Optimal';
+      document.getElementById('ph-status-text').textContent = phStatus;
+      document.getElementById('ph-current').textContent = d.ph.toFixed(1);
+      document.getElementById('ph-current-status').textContent = phStatus;
+
+      // TDS gauge
+      const tdsPct = Math.min(d.tds / 1000, 1) * 100;
+      const tdsColor = d.tds > 800 ? '#ef4444' : d.tds > 500 ? '#f59e0b' : '#10b981';
+      const tdsGauge = document.getElementById('tds-gauge');
+      tdsGauge.style.setProperty('--gauge-color', tdsColor);
+      tdsGauge.style.setProperty('--gauge-percent', `${tdsPct}%`);
+      document.getElementById('tds-gauge-value').textContent = Math.round(d.tds);
+      const tdsStatus = d.tds > 800 ? 'Poor' : d.tds > 500 ? 'Fair' : 'Good';
+      document.getElementById('tds-status-text').textContent = tdsStatus;
+      document.getElementById('tds-current').textContent = Math.round(d.tds);
+      document.getElementById('tds-current-status').textContent = tdsStatus;
+
+      // Turbidity gauge
+      const turbPct = Math.min(d.turbidity / 50, 1) * 100;
+      const turbColor = d.turbidity > 25 ? '#f59e0b' : '#10b981';
+      const turbGauge = document.getElementById('turbidity-gauge');
+      turbGauge.style.setProperty('--gauge-color', turbColor);
+      turbGauge.style.setProperty('--gauge-percent', `${turbPct}%`);
+      document.getElementById('turbidity-gauge-value').textContent = Math.round(d.turbidity);
+      const turbStatus = d.turbidity > 25 ? 'Turbid' : 'Clear';
+      document.getElementById('turbidity-status-text').textContent = turbStatus;
+      document.getElementById('turbidity-current').textContent = Math.round(d.turbidity);
+      document.getElementById('turbidity-current-status').textContent = turbStatus;
+    }
+
+    function updateGraphs(d) {
+      const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+      const pushPoint = (chart, arr, val) => {
+        arr.push(val);
+        if (arr.length > maxPoints) arr.shift();
+        chart.data.labels.push(time);
+        if (chart.data.labels.length > maxPoints) chart.data.labels.shift();
+        chart.data.datasets[0].data = [...arr];
+        chart.update('none');
+      };
+
+      pushPoint(aqiChart, aqiData, d.aqi);
+      pushPoint(phChart, phData, d.ph);
+      pushPoint(tdsChart, tdsData, d.tds);
+      pushPoint(turbidityChart, turbidityData, d.turbidity);
+    }
+
+    function animateTeamCards() {
+      const obs = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+          if (e.isIntersecting) e.target.classList.add('visible');
+        });
+      }, { threshold: 0.1 });
+      document.querySelectorAll('.team-member-card').forEach(c => obs.observe(c));
+    }
   </script>
 </body>
 </html>
-
-
