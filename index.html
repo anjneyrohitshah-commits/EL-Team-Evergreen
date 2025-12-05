@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Team Evergreen + Live AQI/pH/TDS Dashboard</title>
+  <title>Team Evergreen Environmental Dashboard</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
@@ -107,7 +107,7 @@
   <div id="login-gate" class="fixed inset-0 bg-gray-900/95 flex flex-col items-center justify-center z-50 backdrop-blur-sm">
     <div class="bg-gray-800/90 p-8 md:p-12 rounded-3xl shadow-2xl w-full max-w-sm text-center border-t-4 border-emerald-500">
       <h2 class="text-3xl font-bold text-emerald-400 mb-6">Team Evergreen</h2>
-      <p id="login-status-message" class="text-gray-400 mb-6">Live AQI/pH/TDS + Team Showcase</p>
+      <p id="login-status-message" class="text-gray-400 mb-6">Live AQI/pH/TDS/Turbidity + Team Showcase</p>
       <input type="email" id="user-id-input" placeholder="Username" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl mb-4 text-white focus:ring-2 focus:ring-emerald-500">
       <input type="password" id="password-input" placeholder="Password" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl mb-4 text-white focus:ring-2 focus:ring-emerald-500">
       <button id="login-button" onclick="attemptLogin()" class="w-full px-6 py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-bold rounded-xl shadow-lg hover:from-emerald-600 hover:to-emerald-700 transition-all duration-300">
@@ -488,3 +488,4 @@ function initCharts() {
   </script>
 </body>
 </html>
+
