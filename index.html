@@ -26,7 +26,7 @@
       position: absolute; top: 50%; left: 50%;
       transform: translate(-50%, -50%);
     }
-    /* 🔥 ENHANCED TEAM CARD ANIMATIONS */
+    /*  ENHANCED TEAM CARD ANIMATIONS */
     .team-member-card {
       transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       transform: scale(0.8) translateY(50px);
@@ -108,12 +108,12 @@
     <div class="bg-gray-800/90 p-8 md:p-12 rounded-3xl shadow-2xl w-full max-w-sm text-center border-t-4 border-emerald-500">
       <h2 class="text-3xl font-bold text-emerald-400 mb-6">Team Evergreen</h2>
       <p id="login-status-message" class="text-gray-400 mb-6">Live AQI/pH/TDS + Team Showcase</p>
-      <input type="email" id="user-id-input" placeholder="demo@team.com" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl mb-4 text-white focus:ring-2 focus:ring-emerald-500">
-      <input type="password" id="password-input" placeholder="Team123!" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl mb-4 text-white focus:ring-2 focus:ring-emerald-500">
+      <input type="email" id="user-id-input" placeholder="Username" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl mb-4 text-white focus:ring-2 focus:ring-emerald-500">
+      <input type="password" id="password-input" placeholder="Password" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl mb-4 text-white focus:ring-2 focus:ring-emerald-500">
       <button id="login-button" onclick="attemptLogin()" class="w-full px-6 py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-bold rounded-xl shadow-lg hover:from-emerald-600 hover:to-emerald-700 transition-all duration-300">
         Enter Dashboard <span id="login-spinner" class="hidden ml-2 animate-spin inline-block w-5 h-5 border-2 border-white border-t-transparent rounded-full"></span>
       </button>
-      <p class="text-xs text-gray-500 mt-4 font-mono">Demo: demo@team.com / Team123!</p>
+      
     </div>
   </div>
 
@@ -211,7 +211,7 @@
       </div>
     </section>
 
-    <!-- 🔥 TEAM MEMBERS - ALL ANIMATED -->
+    <!--  TEAM MEMBERS - ALL ANIMATED -->
     <section id="team-section" class="py-24 bg-gray-950 border-t border-gray-800">
       <div class="max-w-6xl mx-auto px-4">
         <h2 class="text-5xl md:text-6xl font-black text-center mb-20 bg-gradient-to-r from-emerald-400 to-emerald-500 bg-clip-text text-transparent">Meet The Team</h2>
@@ -221,7 +221,7 @@
           <div class="team-member-card bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm p-8 rounded-3xl shadow-2xl hover:shadow-emerald-500/30 hover:ring-4 ring-emerald-500/20 border border-gray-700/50 hover:border-emerald-400/50 transition-all duration-500">
             <img src="https://placehold.co/120x120/065f46/ffffff?text=A.B." alt="Arkodeep" class="w-28 h-28 rounded-full mx-auto mb-6 border-4 border-emerald-400 shadow-xl hover:scale-110 transition-all duration-300">
             <h3 class="text-2xl md:text-3xl font-bold text-center text-white mb-3">Arkodeep Banerjee</h3>
-            <p class="text-xl text-emerald-400 text-center font-semibold mb-4">Frontend</p>
+            <p class="text-xl text-emerald-400 text-center font-semibold mb-4">Coding + Electronics</p>
             <p class="text-center text-gray-300 leading-relaxed">Frontend coding specialist and Electronics</p>
           </div>
 
@@ -229,16 +229,8 @@
           <div class="team-member-card bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm p-8 rounded-3xl shadow-2xl hover:shadow-emerald-500/30 hover:ring-4 ring-emerald-500/20 border border-gray-700/50 hover:border-emerald-400/50 transition-all duration-500">
             <img src="https://placehold.co/120x120/065f46/ffffff?text=A.R.S." alt="Anjney" class="w-28 h-28 rounded-full mx-auto mb-6 border-4 border-emerald-400 shadow-xl hover:scale-110 transition-all duration-300">
             <h3 class="text-2xl md:text-3xl font-bold text-center text-white mb-3">Anjney Rohit Shah</h3>
-            <p class="text-xl text-emerald-400 text-center font-semibold mb-4">Backend</p>
+            <p class="text-xl text-emerald-400 text-center font-semibold mb-4">Coding + Electronics</p>
             <p class="text-center text-gray-300 leading-relaxed">Backend coding specialist and Electronics</p>
-          </div>
-
-          <!-- Rachit -->
-          <div class="team-member-card bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm p-8 rounded-3xl shadow-2xl hover:shadow-emerald-500/30 hover:ring-4 ring-emerald-500/20 border border-gray-700/50 hover:border-emerald-400/50 transition-all duration-500">
-            <img src="https://placehold.co/120x120/065f46/ffffff?text=R.K." alt="Rachit" class="w-28 h-28 rounded-full mx-auto mb-6 border-4 border-emerald-400 shadow-xl hover:scale-110 transition-all duration-300">
-            <h3 class="text-2xl md:text-3xl font-bold text-center text-white mb-3">Rachit Kalya</h3>
-            <p class="text-xl text-emerald-400 text-center font-semibold mb-4">Design</p>
-            <p class="text-center text-gray-300 leading-relaxed">designing& Documentation</p>
           </div>
 
           <!-- Vijay -->
@@ -249,26 +241,34 @@
             <p class="text-center text-gray-300 leading-relaxed">Project Documentation</p>
           </div>
 
+          <!-- Rachit -->
+          <div class="team-member-card bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm p-8 rounded-3xl shadow-2xl hover:shadow-emerald-500/30 hover:ring-4 ring-emerald-500/20 border border-gray-700/50 hover:border-emerald-400/50 transition-all duration-500">
+            <img src="https://placehold.co/120x120/065f46/ffffff?text=R.K." alt="Rachit" class="w-28 h-28 rounded-full mx-auto mb-6 border-4 border-emerald-400 shadow-xl hover:scale-110 transition-all duration-300">
+            <h3 class="text-2xl md:text-3xl font-bold text-center text-white mb-3">Rachit Kalya</h3>
+            <p class="text-xl text-emerald-400 text-center font-semibold mb-4">Designing</p>
+            <p class="text-center text-gray-300 leading-relaxed">Designing and Documentation</p>
+          </div>
+
           <!-- Shounak -->
           <div class="team-member-card bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm p-8 rounded-3xl shadow-2xl hover:shadow-emerald-500/30 hover:ring-4 ring-emerald-500/20 border border-gray-700/50 hover:border-emerald-400/50 transition-all duration-500">
             <img src="https://placehold.co/120x120/065f46/ffffff?text=S.M." alt="Shounak" class="w-28 h-28 rounded-full mx-auto mb-6 border-4 border-emerald-400 shadow-xl hover:scale-110 transition-all duration-300">
             <h3 class="text-2xl md:text-3xl font-bold text-center text-white mb-3">Shounak Mandal</h3>
             <p class="text-xl text-emerald-400 text-center font-semibold mb-4">Electronics</p>
-            <p class="text-center text-gray-300 leading-relaxed">Hardware Integration</p>
+            <p class="text-center text-gray-300 leading-relaxed">Electronics</p>
           </div>
         </div>
       </div>
     </section>
   </div>
 
-  <!-- 🔥 COMPLETE WORKING JAVASCRIPT -->
+  <!--  COMPLETE WORKING JAVASCRIPT -->
   <script>
     let aqiChart, phChart, tdsChart, aqiData = [], phData = [], tdsData = [];
     const maxPoints = 24;
     const channelId = '3192039';
     const THINGSPEAK_READ_API = '5415S24IAJVBDHNK';
 
-    // ✅ FIXED LOGIN - WORKS PERFECTLY
+    //  FIXED LOGIN - WORKS PERFECTLY
     function attemptLogin() {
       const email = document.getElementById('user-id-input').value.trim();
       const password = document.getElementById('password-input').value.trim();
@@ -276,7 +276,7 @@
       const loginSpinner = document.getElementById('login-spinner');
       const loginButton = document.getElementById('login-button');
 
-      if (email === 'demo@team.com' && password === 'Team123!') {
+      if (email === 'TEAM EVERGREEN' && password === 'TEAM4') {
         loginStatus.textContent = '✅ Accessing Dashboard...';
         loginStatus.className = 'text-emerald-400';
         loginSpinner.classList.remove('hidden');
@@ -290,7 +290,7 @@
           initDashboard();
         }, 1000);
       } else {
-        loginStatus.textContent = '❌ Wrong credentials! Use: demo@team.com / Team123!';
+        loginStatus.textContent = '❌ Wrong credentials! Ask any team member for the username & password';
         loginStatus.className = 'text-red-400 animate-pulse';
         loginSpinner.classList.add('hidden');
         loginButton.disabled = false;
@@ -340,7 +340,7 @@ function initCharts() {
         }
       });
       
-      // ✅ FIXED: Assign charts globally
+      //  FIXED: Assign charts globally
       if (chartConfig.id === 'aqiChart') aqiChart = chart;
       if (chartConfig.id === 'phChart') phChart = chart;
       if (chartConfig.id === 'tdsChart') tdsChart = chart;
@@ -349,7 +349,7 @@ function initCharts() {
 }
 
 
-    // ✅ FIXED LIVE THINGSPEAK DATA
+    //  FIXED LIVE THINGSPEAK DATA
     async function startDataPolling() {
       // First load simulation data, then switch to live
       setTimeout(async () => {
@@ -488,6 +488,3 @@ function initCharts() {
   </script>
 </body>
 </html>
-
-
-
