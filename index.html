@@ -593,7 +593,16 @@
       document.getElementById('ph-gauge').style.setProperty('--gauge-color', phColor);
       document.getElementById('ph-gauge').style.setProperty('--gauge-percent', `${phPct}%`);
       document.getElementById('ph-value').textContent = d.ph.toFixed(1);
-      const phStatus = (d.ph < 6.5 || d.ph > 8.5) ? 'Out of range' : 'Optimal';
+      let phStatus;
+
+if (d.ph < 6.5) {
+  phStatus = 'Acidic';
+} else if (d.ph > 8.5) {
+  phStatus = 'Alkaline';
+} else {
+  phStatus = 'Optimal';
+}
+
       document.getElementById('ph-status-text').textContent = phStatus;
       document.getElementById('ph-current').textContent = d.ph.toFixed(1);
       document.getElementById('ph-current-status').textContent = phStatus;
