@@ -71,30 +71,6 @@
       color: #9ca3af;
     }
   </style>
-
-  <!-- Firebase only initialised, not used further -->
-  <script type="module">
-    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-    import { getDatabase, ref, onValue } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
-    import { getAuth, signInWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyA4ozoZV-MeDc_AbiGMsIJq4EgYqZzjt6M",
-      authDomain: "environment-e374e.firebaseapp.com",
-      databaseURL: "https://environment-e374e-default-rtdb.asia-southeast1.firebasedatabase.app",
-      projectId: "environment-e374e",
-      storageBucket: "environment-e374e.firebasestorage.app",
-      messagingSenderId: "177454401022",
-      appId: "1:177454401022:web:01b0555b60c40b2e746caf"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    window.db = getDatabase(app);
-    window.auth = getAuth(app);
-    window.signInWithFirebase = signInWithEmailAndPassword;
-    window.dbRef = ref;
-    window.dbOnValue = onValue;
-  </script>
 </head>
 <body class="min-h-screen">
 
@@ -103,7 +79,7 @@
     <div class="bg-gray-800/90 p-8 md:p-12 rounded-3xl shadow-2xl w-full max-w-sm text-center border-t-4 border-emerald-500">
       <h2 class="text-3xl font-bold text-emerald-400 mb-6">Team Evergreen</h2>
       <p id="login-status-message" class="text-gray-400 mb-6">
-        Live AQI/pH/TDS/Turbidity + Team Showcase
+        Live Temp/Humidity/AQI/Turbidity/pH/TDS + Team Showcase
       </p>
       <input type="text" id="user-id-input" placeholder="Username"
              class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl mb-4 text-white focus:ring-2 focus:ring-emerald-500">
@@ -138,7 +114,7 @@
           <span>Team Evergreen</span>
         </h1>
         <p class="text-xl md:text-2xl text-emerald-200 mb-8 max-w-2xl mx-auto">
-          Live AQI • pH • TDS • Turbidity Dashboard + Team Showcase
+          Live Temperature • Humidity • AQI • Turbidity • pH • TDS Dashboard + Team Showcase
         </p>
         <div class="flex flex-col sm:flex-row gap-4 justify-center">
           <button onclick="document.getElementById('dashboard').scrollIntoView({behavior:'smooth'})"
@@ -149,6 +125,7 @@
                   class="px-8 py-3 bg-blue-600 text-white font-bold rounded-xl shadow-lg hover:bg-blue-500 transition-all duration-300">
             👥 Meet Team
           </button>
+          
         </div>
       </div>
     </section>
@@ -160,11 +137,37 @@
           Live Sensor Dashboard
         </h2>
         <p class="text-xl text-gray-400 text-center mb-20 font-light">
-          Real-time AQI • pH • TDS • Turbidity from ThingSpeak Channel 3192039
+          Real-time data from ThingSpeak Channel 3192039
         </p>
 
         <!-- GAUGES -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-12 mb-16">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-12 mb-16">
+          <!-- TEMPERATURE -->
+          <div class="flex flex-col items-center">
+            <h3 class="text-2xl font-bold text-red-400 mb-6">🌡️ Temperature</h3>
+            <div id="temp-gauge"
+                 class="w-64 h-64 lg:w-72 lg:h-72 gauge-wrapper border-8 border-gray-700/50 pulse-animate shadow-2xl rounded-full flex items-center justify-center">
+              <div class="w-32 h-32 lg:w-36 lg:h-36 bg-gray-900/95 rounded-full flex flex-col items-center justify-center shadow-xl">
+                <span id="temp-value" class="text-4xl lg:text-5xl font-black text-red-400">0</span>
+                <span class="text-lg text-red-300 font-semibold">°C</span>
+              </div>
+            </div>
+            <p id="temp-status-text" class="text-xl font-bold text-emerald-400 mt-4 text-center">Loading…</p>
+          </div>
+
+          <!-- HUMIDITY -->
+          <div class="flex flex-col items-center">
+            <h3 class="text-2xl font-bold text-purple-400 mb-6">💧 Humidity</h3>
+            <div id="humidity-gauge"
+                 class="w-64 h-64 lg:w-72 lg:h-72 gauge-wrapper border-8 border-gray-700/50 pulse-animate shadow-2xl rounded-full flex items-center justify-center">
+              <div class="w-32 h-32 lg:w-36 lg:h-36 bg-gray-900/95 rounded-full flex flex-col items-center justify-center shadow-xl">
+                <span id="humidity-value" class="text-4xl lg:text-5xl font-black text-purple-400">0</span>
+                <span class="text-lg text-purple-300 font-semibold">%</span>
+              </div>
+            </div>
+            <p id="humidity-status-text" class="text-xl font-bold text-emerald-400 mt-4 text-center">Loading…</p>
+          </div>
+
           <!-- AQI -->
           <div class="flex flex-col items-center">
             <h3 class="text-2xl font-bold text-yellow-400 mb-6">🌫️ AQI</h3>
@@ -178,13 +181,26 @@
             <p id="aqi-status-text" class="text-xl font-bold text-yellow-400 mt-4 text-center">Loading…</p>
           </div>
 
-          <!-- pH -->
+          <!-- TURBIDITY -->
+          <div class="flex flex-col items-center">
+            <h3 class="text-2xl font-bold text-cyan-400 mb-6">🌊 Turbidity</h3>
+            <div id="turbidity-gauge"
+                 class="w-64 h-64 lg:w-72 lg:h-72 gauge-wrapper border-8 border-gray-700/50 pulse-animate shadow-2xl rounded-full flex items-center justify-center">
+              <div class="w-32 h-32 lg:w-36 lg:h-36 bg-gray-900/95 rounded-full flex flex-col items-center justify-center shadow-xl">
+                <span id="turbidity-value" class="text-4xl lg:text-5xl font-black text-cyan-400">0</span>
+                <span class="text-lg text-cyan-300 font-semibold">NTU</span>
+              </div>
+            </div>
+            <p id="turbidity-status-text" class="text-xl font-bold text-emerald-400 mt-4 text-center">Loading…</p>
+          </div>
+
+          <!-- PH -->
           <div class="flex flex-col items-center">
             <h3 class="text-2xl font-bold text-blue-400 mb-6">🧪 pH</h3>
             <div id="ph-gauge"
                  class="w-64 h-64 lg:w-72 lg:h-72 gauge-wrapper border-8 border-gray-700/50 pulse-animate shadow-2xl rounded-full flex items-center justify-center">
               <div class="w-32 h-32 lg:w-36 lg:h-36 bg-gray-900/95 rounded-full flex flex-col items-center justify-center shadow-xl">
-                <span id="ph-gauge-value" class="text-4xl lg:text-5xl font-black text-blue-400">0</span>
+                <span id="ph-value" class="text-4xl lg:text-5xl font-black text-blue-400">0</span>
                 <span class="text-lg text-blue-300 font-semibold">pH</span>
               </div>
             </div>
@@ -193,28 +209,15 @@
 
           <!-- TDS -->
           <div class="flex flex-col items-center">
-            <h3 class="text-2xl font-bold text-yellow-400 mb-6">💧 TDS</h3>
+            <h3 class="text-2xl font-bold text-orange-400 mb-6">💧 TDS</h3>
             <div id="tds-gauge"
                  class="w-64 h-64 lg:w-72 lg:h-72 gauge-wrapper border-8 border-gray-700/50 pulse-animate shadow-2xl rounded-full flex items-center justify-center">
               <div class="w-32 h-32 lg:w-36 lg:h-36 bg-gray-900/95 rounded-full flex flex-col items-center justify-center shadow-xl">
-                <span id="tds-gauge-value" class="text-4xl lg:text-5xl font-black text-yellow-400">0</span>
-                <span class="text-lg text-yellow-300 font-semibold">ppm</span>
+                <span id="tds-value" class="text-4xl lg:text-5xl font-black text-orange-400">0</span>
+                <span class="text-lg text-orange-300 font-semibold">ppm</span>
               </div>
             </div>
             <p id="tds-status-text" class="text-xl font-bold text-emerald-400 mt-4 text-center">Loading…</p>
-          </div>
-
-          <!-- Turbidity -->
-          <div class="flex flex-col items-center">
-            <h3 class="text-2xl font-bold text-cyan-400 mb-6">🌊 Turbidity</h3>
-            <div id="turbidity-gauge"
-                 class="w-64 h-64 lg:w-72 lg:h-72 gauge-wrapper border-8 border-gray-700/50 pulse-animate shadow-2xl rounded-full flex items-center justify-center">
-              <div class="w-32 h-32 lg:w-36 lg:h-36 bg-gray-900/95 rounded-full flex flex-col items-center justify-center shadow-xl">
-                <span id="turbidity-gauge-value" class="text-4xl lg:text-5xl font-black text-cyan-400">0</span>
-                <span class="text-lg text-cyan-300 font-semibold">NTU</span>
-              </div>
-            </div>
-            <p id="turbidity-status-text" class="text-xl font-bold text-emerald-400 mt-4 text-center">Loading…</p>
           </div>
         </div>
 
@@ -222,28 +225,36 @@
           Last Update: <span id="last-updated">Loading…</span>
         </p>
 
-        <!-- 4 LIVE GRAPHS (like ThingSpeak) -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
+        <!-- 6 LIVE GRAPHS -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-8 mb-16">
           <div>
-            <h3 class="text-2xl font-bold text-yellow-400 mb-4 text-center">📈 AQI Trend</h3>
+            <h3 class="text-2xl font-bold text-red-400 mb-4 text-center">🌡️ Temperature Trend</h3>
+            <div class="chart-container"><canvas id="tempChart"></canvas></div>
+          </div>
+          <div>
+            <h3 class="text-2xl font-bold text-purple-400 mb-4 text-center">💧 Humidity Trend</h3>
+            <div class="chart-container"><canvas id="humidityChart"></canvas></div>
+          </div>
+          <div>
+            <h3 class="text-2xl font-bold text-yellow-400 mb-4 text-center">🌫️ AQI Trend</h3>
             <div class="chart-container"><canvas id="aqiChart"></canvas></div>
+          </div>
+          <div>
+            <h3 class="text-2xl font-bold text-cyan-400 mb-4 text-center">🌊 Turbidity Trend</h3>
+            <div class="chart-container"><canvas id="turbidityChart"></canvas></div>
           </div>
           <div>
             <h3 class="text-2xl font-bold text-blue-400 mb-4 text-center">🧪 pH Trend</h3>
             <div class="chart-container"><canvas id="phChart"></canvas></div>
           </div>
           <div>
-            <h3 class="text-2xl font-bold text-yellow-400 mb-4 text-center">💧 TDS Trend</h3>
+            <h3 class="text-2xl font-bold text-orange-400 mb-4 text-center">💧 TDS Trend</h3>
             <div class="chart-container"><canvas id="tdsChart"></canvas></div>
-          </div>
-          <div>
-            <h3 class="text-2xl font-bold text-cyan-400 mb-4 text-center">🌊 Turbidity Trend</h3>
-            <div class="chart-container"><canvas id="turbidityChart"></canvas></div>
           </div>
         </div>
 
         <!-- TABLE -->
-        <div class="bg-gray-800/50 backdrop-blur-xl p-8 rounded-3xl shadow-2xl max-w-4xl mx-auto border border-gray-700/50">
+        <div class="bg-gray-800/50 backdrop-blur-xl p-8 rounded-3xl shadow-2xl max-w-6xl mx-auto border border-gray-700/50">
           <h3 class="text-3xl font-bold text-emerald-400 mb-8 text-center">📊 Current Readings</h3>
           <div class="overflow-x-auto">
             <table class="w-full datasheet text-lg">
@@ -254,9 +265,24 @@
               </thead>
               <tbody>
               <tr>
+                <td><span class="font-mono text-red-400">Temperature</span></td>
+                <td id="temp-current" class="font-mono text-2xl font-black text-red-400">0</td>
+                <td id="temp-current-status" class="text-emerald-400 font-bold px-3 py-1 rounded-full bg-emerald-400/10">–</td>
+              </tr>
+              <tr>
+                <td><span class="font-mono text-purple-400">Humidity</span></td>
+                <td id="humidity-current" class="font-mono text-2xl font-black text-purple-400">0</td>
+                <td id="humidity-current-status" class="text-emerald-400 font-bold px-3 py-1 rounded-full bg-emerald-400/10">–</td>
+              </tr>
+              <tr>
                 <td><span class="font-mono text-yellow-400">AQI</span></td>
                 <td id="aqi-current" class="font-mono text-2xl font-black text-yellow-400">0</td>
                 <td id="aqi-current-status" class="text-yellow-400 font-bold px-3 py-1 rounded-full bg-yellow-400/10">–</td>
+              </tr>
+              <tr>
+                <td><span class="font-mono text-cyan-400">Turbidity (NTU)</span></td>
+                <td id="turbidity-current" class="font-mono text-2xl font-black text-cyan-400">0</td>
+                <td id="turbidity-current-status" class="text-emerald-400 font-bold px-3 py-1 rounded-full bg-emerald-400/10">–</td>
               </tr>
               <tr>
                 <td><span class="font-mono text-blue-400">pH</span></td>
@@ -264,34 +290,28 @@
                 <td id="ph-current-status" class="text-emerald-400 font-bold px-3 py-1 rounded-full bg-emerald-400/10">–</td>
               </tr>
               <tr>
-                <td><span class="font-mono text-yellow-400">TDS (ppm)</span></td>
-                <td id="tds-current" class="font-mono text-2xl font-black text-yellow-400">0</td>
+                <td><span class="font-mono text-orange-400">TDS (ppm)</span></td>
+                <td id="tds-current" class="font-mono text-2xl font-black text-orange-400">0</td>
                 <td id="tds-current-status" class="text-emerald-400 font-bold px-3 py-1 rounded-full bg-emerald-400/10">–</td>
-              </tr>
-              <tr>
-                <td><span class="font-mono text-cyan-400">Turbidity (NTU)</span></td>
-                <td id="turbidity-current" class="font-mono text-2xl font-black text-cyan-400">0</td>
-                <td id="turbidity-current-status" class="text-emerald-400 font-bold px-3 py-1 rounded-full bg-emerald-400/10">–</td>
               </tr>
               </tbody>
             </table>
           </div>
           <div class="mt-8 pt-8 border-t border-gray-700 text-center text-sm text-gray-500 font-mono space-y-1">
             <p>🔴 LIVE: ThingSpeak Channel 3192039 • API: 5415S24IAJVBDHNK</p>
-            <p>📡 Field1=AQI • Field2=pH • Field3=Turbidity • Field4=TDS</p>
+            <p>📡 Field1=Temp • Field2=Humidity • Field3=AQI • Field4=Turbidity • Field5=pH • Field6=TDS</p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- TEAM SECTION WITH 5 MEMBERS -->
+    <!-- TEAM SECTION -->
     <section id="team-section" class="py-24 bg-gray-950 border-t border-gray-800">
       <div class="max-w-6xl mx-auto px-4">
         <h2 class="text-5xl md:text-6xl font-black text-center mb-20 bg-gradient-to-r from-emerald-400 to-emerald-500 bg-clip-text text-transparent">
           Meet The Team
         </h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 max-w-5xl mx-auto">
-
           <!-- Arkodeep Banerjee -->
           <div class="team-member-card bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm p-8 rounded-3xl shadow-2xl hover:shadow-emerald-500/30 hover:ring-4 ring-emerald-500/20 border border-gray-700/50 hover:border-emerald-400/50 transition-all duration-500">
             <div class="w-28 h-28 rounded-full mx-auto mb-6 border-4 border-emerald-400 shadow-xl flex items-center justify-center bg-emerald-900 text-3xl font-bold text-white">
@@ -299,9 +319,7 @@
             </div>
             <h3 class="text-2xl md:text-3xl font-bold text-center text-white mb-3">Arkodeep Banerjee</h3>
             <p class="text-xl text-emerald-400 text-center font-semibold mb-4">Coding + Electronics</p>
-            <p class="text-center text-gray-300 leading-relaxed">
-              Frontend coding specialist and electronics.
-            </p>
+            <p class="text-center text-gray-300 leading-relaxed">Frontend coding specialist and electronics.</p>
           </div>
 
           <!-- Anjney Rohit Shah -->
@@ -311,9 +329,7 @@
             </div>
             <h3 class="text-2xl md:text-3xl font-bold text-center text-white mb-3">Anjney Rohit Shah</h3>
             <p class="text-xl text-emerald-400 text-center font-semibold mb-4">Coding + Electronics</p>
-            <p class="text-center text-gray-300 leading-relaxed">
-              Backend coding specialist and electronics.
-            </p>
+            <p class="text-center text-gray-300 leading-relaxed">Backend coding specialist and electronics.</p>
           </div>
 
           <!-- SP Vijay Moudgalya -->
@@ -323,9 +339,7 @@
             </div>
             <h3 class="text-2xl md:text-3xl font-bold text-center text-white mb-3">SP Vijay Moudgalya</h3>
             <p class="text-xl text-emerald-400 text-center font-semibold mb-4">Designing</p>
-            <p class="text-center text-gray-300 leading-relaxed">
-              Designing and project documentation.
-            </p>
+            <p class="text-center text-gray-300 leading-relaxed">Designing and project documentation.</p>
           </div>
 
           <!-- Rachit Kalya -->
@@ -335,9 +349,7 @@
             </div>
             <h3 class="text-2xl md:text-3xl font-bold text-center text-white mb-3">Rachit Kalya</h3>
             <p class="text-xl text-emerald-400 text-center font-semibold mb-4">Designing</p>
-            <p class="text-center text-gray-300 leading-relaxed">
-              Designing and documentation.
-            </p>
+            <p class="text-center text-gray-300 leading-relaxed">Designing and documentation.</p>
           </div>
 
           <!-- Shounak Mandal -->
@@ -347,24 +359,22 @@
             </div>
             <h3 class="text-2xl md:text-3xl font-bold text-center text-white mb-3">Shounak Mandal</h3>
             <p class="text-xl text-emerald-400 text-center font-semibold mb-4">Electronics</p>
-            <p class="text-center text-gray-300 leading-relaxed">
-              Electronics.
-            </p>
+            <p class="text-center text-gray-300 leading-relaxed">Electronics.</p>
           </div>
-
         </div>
       </div>
     </section>
-  </div>
+
+    
 
   <!-- JAVASCRIPT -->
   <script>
     const channelId = '3192039';
     const THINGSPEAK_READ_API = '5415S24IAJVBDHNK';
 
-    let aqiChart, phChart, tdsChart, turbidityChart;
-    let aqiData = [], phData = [], tdsData = [], turbidityData = [];
-    const maxPoints = 40;   // number of recent points to show
+    let tempChart, humidityChart, aqiChart, turbidityChart, phChart, tdsChart;
+    let tempData = [], humidityData = [], aqiData = [], turbidityData = [], phData = [], tdsData = [];
+    const maxPoints = 40;
 
     function attemptLogin() {
       const user = document.getElementById('user-id-input').value.trim();
@@ -382,8 +392,7 @@
         setTimeout(() => {
           document.getElementById('login-gate').classList.add('hidden');
           document.getElementById('main-content').classList.remove('hidden');
-          document.getElementById('auth-status').textContent =
-            `🔴 LIVE: Channel ${channelId} Connected`;
+          document.getElementById('auth-status').textContent = `🔴 LIVE: Channel ${channelId} Connected`;
           initDashboard();
         }, 800);
       } else {
@@ -395,16 +404,15 @@
     }
 
     document.addEventListener('keydown', e => {
-      if (e.key === 'Enter' &&
-          !document.getElementById('login-gate').classList.contains('hidden')) {
+      if (e.key === 'Enter' && !document.getElementById('login-gate').classList.contains('hidden')) {
         attemptLogin();
       }
     });
 
     function initDashboard() {
       initCharts();
-      fetchHistory();     // load recent data like ThingSpeak charts
-      startDataPolling(); // then keep updating
+      fetchHistory();
+      startDataPolling();
       animateTeamCards();
     }
 
@@ -437,60 +445,61 @@
           }
         });
       };
-      aqiChart       = def('aqiChart',       '#f59e0b', 200, 'AQI');
-      phChart        = def('phChart',        '#3b82f6', 14,  'pH');
-      tdsChart       = def('tdsChart',       '#f59e0b', 1200,'TDS (ppm)');
+
+      tempChart = def('tempChart', '#ef4444', 50, 'Temperature (°C)');
+      humidityChart = def('humidityChart', '#a855f7', 100, 'Humidity (%)');
+      aqiChart = def('aqiChart', '#f59e0b', 200, 'AQI');
       turbidityChart = def('turbidityChart', '#06b6d4', 100, 'Turbidity (NTU)');
+      phChart = def('phChart', '#3b82f6', 14, 'pH');
+      tdsChart = def('tdsChart', '#f97316', 1200, 'TDS (ppm)');
     }
 
-    // Load last N points from ThingSpeak so graphs look like channel charts
     async function fetchHistory() {
       try {
-        const url =
-          `https://api.thingspeak.com/channels/${channelId}/feeds.json?api_key=${THINGSPEAK_READ_API}&results=${maxPoints}`;
+        const url = `https://api.thingspeak.com/channels/${channelId}/feeds.json?api_key=${THINGSPEAK_READ_API}&results=${maxPoints}`;
         const res = await fetch(url);
         const json = await res.json();
         if (!json.feeds) return;
 
-        aqiData = [];
-        phData = [];
-        tdsData = [];
-        turbidityData = [];
+        [tempData, humidityData, aqiData, turbidityData, phData, tdsData] = [[], [], [], [], [], []];
         const labels = [];
 
         json.feeds.forEach(feed => {
           const t = new Date(feed.created_at);
           const label = t.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
           labels.push(label);
-          aqiData.push(parseFloat(feed.field1) || 0);
-          phData.push(parseFloat(feed.field2) || 0);
-          turbidityData.push(parseFloat(feed.field3) || 0);
-          tdsData.push(parseFloat(feed.field4) || 0);
+
+          tempData.push(parseFloat(feed.field1) || 0);
+          humidityData.push(parseFloat(feed.field2) || 0);
+          aqiData.push(parseFloat(feed.field3) || 0);
+          turbidityData.push(parseFloat(feed.field4) || 0);
+          phData.push(parseFloat(feed.field5) || 0);
+          tdsData.push(parseFloat(feed.field6) || 0);
         });
 
-        // apply to charts
-        aqiChart.data.labels = [...labels];
-        phChart.data.labels = [...labels];
-        tdsChart.data.labels = [...labels];
-        turbidityChart.data.labels = [...labels];
+        [tempChart, humidityChart, aqiChart, turbidityChart, phChart, tdsChart].forEach(chart => {
+          chart.data.labels = [...labels];
+          chart.update();
+        });
 
+        tempChart.data.datasets[0].data = [...tempData];
+        humidityChart.data.datasets[0].data = [...humidityData];
         aqiChart.data.datasets[0].data = [...aqiData];
+        turbidityChart.data.datasets[0].data = [...turbidityData];
         phChart.data.datasets[0].data = [...phData];
         tdsChart.data.datasets[0].data = [...tdsData];
-        turbidityChart.data.datasets[0].data = [...turbidityData];
 
-        aqiChart.update();
-        phChart.update();
-        tdsChart.update();
-        turbidityChart.update();
+        [tempChart, humidityChart, aqiChart, turbidityChart, phChart, tdsChart].forEach(chart => chart.update());
 
         if (json.feeds.length > 0) {
           const last = json.feeds[json.feeds.length - 1];
           updateDashboard({
-            aqi: parseFloat(last.field1) || 0,
-            ph: parseFloat(last.field2) || 0,
-            turbidity: parseFloat(last.field3) || 0,
-            tds: parseFloat(last.field4) || 0,
+            temp: parseFloat(last.field1) || 0,
+            humidity: parseFloat(last.field2) || 0,
+            aqi: parseFloat(last.field3) || 0,
+            turbidity: parseFloat(last.field4) || 0,
+            ph: parseFloat(last.field5) || 0,
+            tds: parseFloat(last.field6) || 0,
             timestamp: new Date(last.created_at || Date.now()).toLocaleString()
           });
         }
@@ -504,27 +513,27 @@
       setInterval(fetchLiveData, 15000);
     }
 
-    // latest sample only
     async function fetchLiveData() {
       try {
-        const url =
-          `https://api.thingspeak.com/channels/${channelId}/feeds.json?api_key=${THINGSPEAK_READ_API}&results=1`;
+        const url = `https://api.thingspeak.com/channels/${channelId}/feeds.json?api_key=${THINGSPEAK_READ_API}&results=1`;
         const res = await fetch(url);
         const json = await res.json();
 
         if (json.feeds && json.feeds.length > 0) {
           const f = json.feeds[0];
           const data = {
-            aqi: parseFloat(f.field1) || 0,
-            ph: parseFloat(f.field2) || 0,
-            turbidity: parseFloat(f.field3) || 0,
-            tds: parseFloat(f.field4) || 0,
+            temp: parseFloat(f.field1) || 0,
+            humidity: parseFloat(f.field2) || 0,
+            aqi: parseFloat(f.field3) || 0,
+            turbidity: parseFloat(f.field4) || 0,
+            ph: parseFloat(f.field5) || 0,
+            tds: parseFloat(f.field6) || 0,
             timestamp: new Date(f.created_at || Date.now()).toLocaleString()
           };
           updateDashboard(data);
           updateGraphs(data);
           document.getElementById('auth-status').textContent =
-            `🔴 LIVE: Ch${channelId} AQI:${Math.round(data.aqi)} pH:${data.ph.toFixed(1)} TDS:${Math.round(data.tds)} Turb:${Math.round(data.turbidity)}`;
+            `🔴 LIVE: Ch${channelId} T:${data.temp.toFixed(1)}°C H:${data.humidity.toFixed(1)}% AQI:${Math.round(data.aqi)} Turb:${Math.round(data.turbidity)} pH:${data.ph.toFixed(1)} TDS:${Math.round(data.tds)}`;
         }
       } catch (e) {
         console.error('ThingSpeak error', e);
@@ -534,53 +543,71 @@
     function updateDashboard(d) {
       document.getElementById('last-updated').textContent = d.timestamp;
 
-      // AQI gauge
+      // TEMPERATURE
+      const tempPct = Math.min((d.temp - 0) / 50, 1) * 100;
+      const tempColor = d.temp > 35 ? '#ef4444' : d.temp > 25 ? '#f59e0b' : '#10b981';
+      document.getElementById('temp-gauge').style.setProperty('--gauge-color', tempColor);
+      document.getElementById('temp-gauge').style.setProperty('--gauge-percent', `${tempPct}%`);
+      document.getElementById('temp-value').textContent = d.temp.toFixed(1);
+      const tempStatus = d.temp > 35 ? 'Hot' : d.temp > 25 ? 'Warm' : 'Good';
+      document.getElementById('temp-status-text').textContent = tempStatus;
+      document.getElementById('temp-current').textContent = d.temp.toFixed(1);
+      document.getElementById('temp-current-status').textContent = tempStatus;
+
+      // HUMIDITY
+      const humPct = Math.min(d.humidity / 100, 1) * 100;
+      const humColor = d.humidity > 80 ? '#ef4444' : d.humidity > 60 ? '#f59e0b' : '#10b981';
+      document.getElementById('humidity-gauge').style.setProperty('--gauge-color', humColor);
+      document.getElementById('humidity-gauge').style.setProperty('--gauge-percent', `${humPct}%`);
+      document.getElementById('humidity-value').textContent = Math.round(d.humidity);
+      const humStatus = d.humidity > 80 ? 'Very Humid' : d.humidity > 60 ? 'Humid' : 'Good';
+      document.getElementById('humidity-status-text').textContent = humStatus;
+      document.getElementById('humidity-current').textContent = Math.round(d.humidity);
+      document.getElementById('humidity-current-status').textContent = humStatus;
+
+      // AQI
       const aqiPct = Math.min(d.aqi / 150, 1) * 100;
       const aqiColor = d.aqi > 100 ? '#ef4444' : d.aqi > 50 ? '#f59e0b' : '#10b981';
-      const aqiGauge = document.getElementById('aqi-gauge');
-      aqiGauge.style.setProperty('--gauge-color', aqiColor);
-      aqiGauge.style.setProperty('--gauge-percent', `${aqiPct}%`);
+      document.getElementById('aqi-gauge').style.setProperty('--gauge-color', aqiColor);
+      document.getElementById('aqi-gauge').style.setProperty('--gauge-percent', `${aqiPct}%`);
       document.getElementById('aqi-value').textContent = Math.round(d.aqi);
       const aqiStatus = d.aqi > 100 ? 'Unhealthy' : d.aqi > 50 ? 'Moderate' : 'Good';
       document.getElementById('aqi-status-text').textContent = aqiStatus;
       document.getElementById('aqi-current').textContent = Math.round(d.aqi);
       document.getElementById('aqi-current-status').textContent = aqiStatus;
 
-      // pH gauge
+      // TURBIDITY
+      const turbPct = Math.min(d.turbidity / 50, 1) * 100;
+      const turbColor = d.turbidity > 25 ? '#f59e0b' : '#10b981';
+      document.getElementById('turbidity-gauge').style.setProperty('--gauge-color', turbColor);
+      document.getElementById('turbidity-gauge').style.setProperty('--gauge-percent', `${turbPct}%`);
+      document.getElementById('turbidity-value').textContent = Math.round(d.turbidity);
+      const turbStatus = d.turbidity > 25 ? 'Turbid' : 'Clear';
+      document.getElementById('turbidity-status-text').textContent = turbStatus;
+      document.getElementById('turbidity-current').textContent = Math.round(d.turbidity);
+      document.getElementById('turbidity-current-status').textContent = turbStatus;
+
+      // PH
       const phPct = Math.min((d.ph / 14) * 100, 100);
       const phColor = (d.ph < 6.5 || d.ph > 8.5) ? '#ef4444' : '#10b981';
-      const phGauge = document.getElementById('ph-gauge');
-      phGauge.style.setProperty('--gauge-color', phColor);
-      phGauge.style.setProperty('--gauge-percent', `${phPct}%`);
-      document.getElementById('ph-gauge-value').textContent = d.ph.toFixed(1);
+      document.getElementById('ph-gauge').style.setProperty('--gauge-color', phColor);
+      document.getElementById('ph-gauge').style.setProperty('--gauge-percent', `${phPct}%`);
+      document.getElementById('ph-value').textContent = d.ph.toFixed(1);
       const phStatus = (d.ph < 6.5 || d.ph > 8.5) ? 'Out of range' : 'Optimal';
       document.getElementById('ph-status-text').textContent = phStatus;
       document.getElementById('ph-current').textContent = d.ph.toFixed(1);
       document.getElementById('ph-current-status').textContent = phStatus;
 
-      // TDS gauge
+      // TDS
       const tdsPct = Math.min(d.tds / 1000, 1) * 100;
       const tdsColor = d.tds > 800 ? '#ef4444' : d.tds > 500 ? '#f59e0b' : '#10b981';
-      const tdsGauge = document.getElementById('tds-gauge');
-      tdsGauge.style.setProperty('--gauge-color', tdsColor);
-      tdsGauge.style.setProperty('--gauge-percent', `${tdsPct}%`);
-      document.getElementById('tds-gauge-value').textContent = Math.round(d.tds);
+      document.getElementById('tds-gauge').style.setProperty('--gauge-color', tdsColor);
+      document.getElementById('tds-gauge').style.setProperty('--gauge-percent', `${tdsPct}%`);
+      document.getElementById('tds-value').textContent = Math.round(d.tds);
       const tdsStatus = d.tds > 800 ? 'Poor' : d.tds > 500 ? 'Fair' : 'Good';
       document.getElementById('tds-status-text').textContent = tdsStatus;
       document.getElementById('tds-current').textContent = Math.round(d.tds);
       document.getElementById('tds-current-status').textContent = tdsStatus;
-
-      // Turbidity gauge
-      const turbPct = Math.min(d.turbidity / 50, 1) * 100;
-      const turbColor = d.turbidity > 25 ? '#f59e0b' : '#10b981';
-      const turbGauge = document.getElementById('turbidity-gauge');
-      turbGauge.style.setProperty('--gauge-color', turbColor);
-      turbGauge.style.setProperty('--gauge-percent', `${turbPct}%`);
-      document.getElementById('turbidity-gauge-value').textContent = Math.round(d.turbidity);
-      const turbStatus = d.turbidity > 25 ? 'Turbid' : 'Clear';
-      document.getElementById('turbidity-status-text').textContent = turbStatus;
-      document.getElementById('turbidity-current').textContent = Math.round(d.turbidity);
-      document.getElementById('turbidity-current-status').textContent = turbStatus;
     }
 
     function updateGraphs(d) {
@@ -595,10 +622,12 @@
         chart.update('none');
       };
 
+      pushPoint(tempChart, tempData, d.temp);
+      pushPoint(humidityChart, humidityData, d.humidity);
       pushPoint(aqiChart, aqiData, d.aqi);
+      pushPoint(turbidityChart, turbidityData, d.turbidity);
       pushPoint(phChart, phData, d.ph);
       pushPoint(tdsChart, tdsData, d.tds);
-      pushPoint(turbidityChart, turbidityData, d.turbidity);
     }
 
     function animateTeamCards() {
@@ -612,4 +641,3 @@
   </script>
 </body>
 </html>
-
